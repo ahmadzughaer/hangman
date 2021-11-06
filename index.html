@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        .splash {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: black;
+            z-index: 200;
+            color: burlywood;
+            text-align: center;
+            line-height: 90vh;
+        }
+        .splash.display-none {
+            position: fixed;
+            opacity: 0;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background-color: black;
+            z-index: -20;
+            color: burlywood;
+            text-align: center;
+            line-height: 90vh;
+            transition: all 0.5s;
+        }
+
+        @keyframes fadeIn {
+            to {
+                opacity: 1;
+            }
+        }
+        .fade-in {
+            opacity: 0;
+            animation: fadeIn 1s ease-in forwards;
+            }
+
+        header {
+            height: 150px;
+            border: 3px solid black;
+            widows: 300px;
+            font-size: 20px;
+            text-align: center;
+            font-family: Georgia, 'Times New Roman', Times, serif;
+            margin: 50px auto;
+            width: 80%;
+            background-color: brown;
+            }
+        header h1 {
+            padding-top: 30px;
+            font-size: 50px;
+            
+            color: burlywood;
+        }
+        .container {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+    <div class="splash">
+        <h1 class="fade-in">Welcome to Hang Man Game</h1>
+    </div>
+    <header><h1>It's a Hang Man Game, Try Your Luck!</h1></header>
+    <div class="container">
+        <h2>You have <span id="attempts"></span> guesses, good luck</h2>
+        <p>The word is:</p>
+        <div class="underscore" id="letter">----</div><br>
+        <input id="guess" onfocus="this.value=''">
+        <button onclick="check()" id="btn">Check!</button>
+        <h2 id="note"></h2>
+    </div>
+</body>
+<script>
+    
+    const splash = document.querySelector('.splash');
+    document.addEventListener('DOMContentLoaded', (e) => {
+        setTimeout(()=> 
+        {
+            splash.classList.add('display-none');
+    },  2000
+        );
+    });
+    const words = ["pizza", "burger", "pasta", "falafel", "shawrma", "taco", "fajita", "lasagna", "shakshuka", "schnitzel"];
+    const word = words[Math.floor(Math.random() * words.length)]; // random pick of the word
+
+    let docUnderscore = document.getElementsByClassName("underscore");
+    let attempt = 10;
+    let right =0;
+    let current=0;
+
+
+    const answerArray = []; 
+    document.getElementById("attempts").innerHTML = attempt;
+    let underscore = [];
+    let generateUnderscores = () => {
+    for (let i = 0; i < word.length; i++) {
+        if(word[i] != ' ') {
+            underscore.push('_');
+        }
+        else {
+            underscore.push(' ');
+        }
+    }
+    console.log(underscore);
+    return underscore;
+}
+docUnderscore[0].innerHTML = generateUnderscores().join(' ');
+
+const end = () => {
+    document.getElementById("btn").style.display = 'none';
+    document.getElementById("guess").style.display = 'none';
+    document.getElementById("note").innerHTML = "Not that good :(";
+    document.getElementById("note").style.color = "black";
+
+}
+const win = () => {
+    document.getElementById("btn").style.display = 'none';
+    document.getElementById("guess").style.display = 'none';
+    document.getElementById("note").innerHTML = "You are good";
+    document.getElementById("note").style.color = "green";
+
+}
+
+const check = () => {
+    let guess = document.getElementById("guess").value;
+    let regex=/^[a-zA-Z]+$/;
+    if(guess.length == 0){
+        alert("Please enter a letter");
+    }
+
+    else if (guess.length > 1){
+        alert("Please enter one letter");
+    }
+    else if ( !guess.match(regex)) {
+        alert("Please enter just a letter");
+    }
+    
+    
+    else {
+        let lowercase = guess.toLowerCase();
+        for (let i = 0; i < word.length; i++) {
+            if(word[i] === lowercase) {
+                underscore[i] = lowercase;
+                document.getElementById("note").innerHTML = attempt+" attempt left";
+                document.getElementById("note").style.color = "green";
+                right++;
+                if(right === word.length){
+                    win()
+                }
+            }
+            
+
+        }
+
+            if(current === right) {
+                document.getElementById("note").innerHTML = "Try Again";
+                document.getElementById("note").style.color = "red";
+                attempt--;
+                
+            }
+            current=right;
+            if(attempt === 0){
+                end();
+            }
+        document.getElementById("letter").innerHTML= underscore.join(" ");
+        document.getElementById("attempts").innerHTML= attempt;
+    
+    }
+    } 
+    </script>
+</html>
